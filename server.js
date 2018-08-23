@@ -65,6 +65,23 @@ app.post('/register', (req, res) => {
   res.json(newUser);
 });
 
+// PROFILE
+app.get('/profile/:id', (req, res) => {
+  const {id} = req.params;
+  let userFound = false;
+
+  database.users.forEach(user => {
+    if (id === user.id) {
+      userFound = true;
+      res.json(`Welcome, ${user.name}!`);
+    }
+  });
+
+  if (!userFound) {
+    res.status(404).json(`User not found.`);
+  }
+});
+
 
 app.listen(3000, () => {
   console.log('Beep boop! Listening on port 3000!');
