@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+app.use(bodyParser.json());
+
 
 const database = {
   users: [
@@ -24,12 +26,13 @@ const database = {
   ]
 }
 
-app.use(bodyParser.json());
 
+// ROOT
 app.get('/', (req, res) => {
-  res.json('Hello world!');
+  res.json(database.users);
 });
 
+// SIGN IN
 app.post('/signin', (req, res) => {
   const {email, password, name} = req.body;
   let userFound = false;
@@ -37,14 +40,31 @@ app.post('/signin', (req, res) => {
   database.users.forEach(user => {
     if (email === user.email && password === user.password) {
       userFound = true;
-      res.json(`Thanks for signing in, ${name}!`);
+      res.json(user);
     }
   });
 
   if (!userFound) {
-    res.json('Incorrent email and/or password.');
+    res.status(400).json('Incorrent email and/or password.');
   }
 });
+
+// REGISTER
+app.post('/register', (req, res) => {
+  const {name, email, password} = req.body;
+
+  const newUser = {
+    id: '125',
+    name: name,
+    email: email,
+    password: password,
+    entries: 0,
+    joined: new Date()
+  };
+  database.users.push(newUser);
+  res.json(newUser);
+});
+
 
 app.listen(3000, () => {
   console.log('Beep boop! Listening on port 3000!');
