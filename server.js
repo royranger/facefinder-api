@@ -82,6 +82,22 @@ app.get('/profile/:id', (req, res) => {
   }
 });
 
+// IMAGE
+app.post('/image', (req, res) => {
+  const {id} = req.body;
+  let userFound = false;
+
+  database.users.forEach(user => {
+    if (id === user.id) {
+      userFound = true;
+      user.entries++;
+      res.json(`${user.name} has ${user.entries} entries.`);
+    }
+  });
+  if (!userFound) {
+    res.status(404).json('User not found');
+  }
+});
 
 app.listen(3000, () => {
   console.log('Beep boop! Listening on port 3000!');
