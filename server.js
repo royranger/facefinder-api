@@ -1,8 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 
 const database = {
@@ -34,7 +36,7 @@ app.get('/', (req, res) => {
 
 // SIGN IN
 app.post('/signin', (req, res) => {
-  const {email, password, name} = req.body;
+  const {email, password} = req.body;
   let userFound = false;
 
   database.users.forEach(user => {
@@ -45,7 +47,7 @@ app.post('/signin', (req, res) => {
   });
 
   if (!userFound) {
-    res.status(400).json('Incorrent email and/or password.');
+    res.status(400).json('Incorrect email and/or password.');
   }
 });
 
@@ -102,10 +104,3 @@ app.post('/image', (req, res) => {
 app.listen(3000, () => {
   console.log('Beep boop! Listening on port 3000!');
 });
-
-
-// root -> res = this is working
-// signin -> POST, takes req.body.email and req.body.password, res = success/not
-// register -> POST, takes req.body.name, email and password. res = new created user
-// profile/:userId -> GET userId, res = user
-// image -> PUT res: user (with the updated info)
