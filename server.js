@@ -15,6 +15,7 @@ const database = {
       email: 'ari@gmail.com',
       password: 'green',
       entries: 0,
+      faces: 0,
       joined: new Date()
     },
     {
@@ -23,6 +24,7 @@ const database = {
       email: 'nate@gmail.com',
       password: 'red',
       entries: 0,
+      faces: 0,
       joined: new Date()
     }
   ]
@@ -61,6 +63,7 @@ app.post('/register', (req, res) => {
     email: email,
     password: password,
     entries: 0,
+    faces: 0,
     joined: new Date()
   };
   database.users.push(newUser);
@@ -85,7 +88,7 @@ app.get('/profile/:id', (req, res) => {
 });
 
 // IMAGE
-app.post('/image', (req, res) => {
+app.put('/image', (req, res) => {
   const {id} = req.body;
   let userFound = false;
 
@@ -93,12 +96,30 @@ app.post('/image', (req, res) => {
     if (id === user.id) {
       userFound = true;
       user.entries++;
-      res.json(`${user.name} has ${user.entries} entries.`);
+      res.json(user.entries);
     }
   });
   if (!userFound) {
     res.status(404).json('User not found');
   }
+});
+
+// FACECOUNT
+app.put('/facecount', (req, res) => {
+  const {id, numFaces} = req.body;
+  let userFound = false;
+
+  database.users.forEach(user=> {
+    if (id === user.id) {
+      userFound = true;
+      user.faces += numFaces;
+      res.json(user.faces);
+    }
+  });
+  if (!userFound) {
+    res.status(404).json('User not found')
+  }
+
 });
 
 app.listen(3000, () => {
