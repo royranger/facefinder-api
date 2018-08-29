@@ -44,7 +44,10 @@ const database = {
 
 // ROOT
 app.get('/', (req, res) => {
-  res.json(database.users);
+  db.select().table('users')
+  .returning('*')
+  .then(users => res.json(users))
+  .catch(err => res.status(404).json('users not found'))
 });
 
 // SIGN IN
