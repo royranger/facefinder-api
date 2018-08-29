@@ -99,36 +99,35 @@ app.get('/profile/:id', (req, res) => {
 // IMAGE
 app.put('/image', (req, res) => {
   const {id} = req.body;
-  let userFound = false;
-
-  database.users.forEach(user => {
-    if (id === user.id) {
-      userFound = true;
-      user.entries++;
-      res.json(user.entries);
+  db('users')
+  .where('id', '=', id)
+  .returning('entries')
+  .increment('entries', 1)
+  .then(entries => {
+    if (entries.length) {
+      res.json(entries[0]);
+    } else {
+      res.status(404).json('User not found');
     }
-  });
-  if (!userFound) {
-    res.status(404).json('User not found');
-  }
+    })
+  .catch(err => res.status(400).json('unable to get entries'))
 });
 
 // FACECOUNT
 app.put('/facecount', (req, res) => {
   const {id, numFaces} = req.body;
-  let userFound = false;
-
-  database.users.forEach(user=> {
-    if (id === user.id) {
-      userFound = true;
-      user.faces += numFaces;
-      res.json(user.faces);
+  db('users')
+  .where('id', '=', id)
+  .returning('faces')
+  .increment('faces', numFaces)
+  .then(faces => {
+    if (faces.length) {
+      res.json(faces[0]);
+    } else {
+      res.status(404).json('User not found');
     }
-  });
-  if (!userFound) {
-    res.status(404).json('User not found')
-  }
-
+  })
+  .catch(err => res.status(400).json('unable to update facecount'))
 });
 
 app.listen(3000, () => {
