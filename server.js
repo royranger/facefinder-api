@@ -1,6 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const knex = require('knex');
+
+const db = knex({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    user: 'Joy',
+    password: '',
+    database: 'facefinder'
+  }
+});
 
 const app = express();
 app.use(bodyParser.json());
@@ -57,17 +68,17 @@ app.post('/signin', (req, res) => {
 app.post('/register', (req, res) => {
   const {name, email, password} = req.body;
 
-  const newUser = {
-    id: '125',
+  db('users')
+  .returning('*')
+  .insert({
     name: name,
     email: email,
-    password: password,
-    entries: 0,
-    faces: 0,
     joined: new Date()
-  };
-  database.users.push(newUser);
-  res.json(newUser);
+  })
+    .then(newUser => {
+      res.json(newUser[0]);
+    })
+    .catch(err => res.status(400).json('Unable to register'))
 });
 
 // PROFILE
