@@ -1,8 +1,13 @@
 const handleRegister = (req, res, db, bcrypt) => {
   const {name, email, password} = req.body;
+  const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   if (!name || !email || !password) {
     return res.status(400).json('incorrect form submission');
+  }
+
+  if (!email.match(mailformat)) {
+    return res.status(400).json('email is not valid');
   }
 
   const hash = bcrypt.hashSync(password);
