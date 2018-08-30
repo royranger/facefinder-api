@@ -52,6 +52,10 @@ app.put('/image', (req, res) => {
   image.handleImage(req, res, db);
 } );
 
+app.post('/imageurl', (req, res) => {
+  image.handleApiCall(req, res);
+});
+
 // FACECOUNT
 app.put('/facecount', (req, res) => {
   facecount.handleFaceCount(req, res, db);
